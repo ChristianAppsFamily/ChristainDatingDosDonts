@@ -20,14 +20,14 @@ import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
 import * as InAppPurchases from 'expo-in-app-purchases';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Placeholder ad unit IDs - replace with actual IDs when provided
+// AdMob ad unit IDs for Christian Dating Do's & Don'ts
 const BANNER_AD_UNIT_ID = __DEV__ 
   ? TestIds.BANNER 
-  : 'ca-app-pub-3002325591150738/9683450640';
+  : 'ca-app-pub-3002325591150738/3376257970';
 
 const INTERSTITIAL_AD_UNIT_ID = __DEV__
   ? TestIds.INTERSTITIAL
-  : 'ca-app-pub-3002325591150738/4291523162';
+  : 'ca-app-pub-3002325591150738/9323566680';
 
 const REMOVE_ADS_PRODUCT_ID = 'com.christianappempire.datingdosdonts.removeads';
 const ADS_REMOVED_KEY = '@ads_removed';
