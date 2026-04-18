@@ -28,3 +28,12 @@ export interface Comment {
 }
 
 export type Tab = 'home' | 'bookmarks' | 'checklist' | 'journal' | 'profile';
+
+// React Native WebView interface
+declare global {
+  interface Window {
+    ReactNativeWebView?: {
+      postMessage: (message: string) => void;
+    };
+  }
+}

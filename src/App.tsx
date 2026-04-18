@@ -546,6 +546,56 @@ function JournalTab({ entries, onAddEntry, onDeleteEntry }: { entries: JournalEn
 function ProfileTab() {
   const [notifications, setNotifications] = useState(true);
   const [reminders, setReminders] = useState(true);
+  const [adsRemoved, setAdsRemoved] = useState(false);
+  const [isNativeApp, setIsNativeApp] = useState(false);
+
+  useEffect(() => {
+    // Check if running in React Native WebView
+    const checkNative = () => {
+      const isRN = !!(window.ReactNativeWebView && window.ReactNativeWebView.postMessage);
+      setIsNativeApp(isRN);
+      
+      if (isRN) {
+        // Request ads status from native
+        window.ReactNativeWebView.postMessage(JSON.stringify({
+          type: 'CHECK_ADS_STATUS'
+        }));
+      }
+    };
+    checkNative();
+
+    // Listen for ads status from native
+    const handleMessage = (event: MessageEvent) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === 'ADS_STATUS') {
+          setAdsRemoved(data.adsRemoved);
+        }
+      } catch (e) {}
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
+  const handleRemoveAds = () => {
+    if (isNativeApp && window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(JSON.stringify({
+        type: 'PURCHASE_REMOVE_ADS'
+      }));
+    } else {
+      // Web fallback - could redirect to purchase page
+      alert('Please download our mobile app to remove ads!');
+    }
+  };
+
+  const handleRestorePurchases = () => {
+    if (isNativeApp && window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(JSON.stringify({
+        type: 'RESTORE_PURCHASES'
+      }));
+    }
+  };
 
   return (
     <motion.div 
@@ -586,10 +636,28 @@ function ProfileTab() {
       <div className="bento-card bg-brand-orange/5 border-brand-orange shadow-[6px_6px_0px_#141414]">
         <div className="bento-title !text-brand-orange after:bg-brand-orange">Exclusive Access</div>
         <div className="grid grid-cols-1 gap-3">
-          <button className="bento-btn bg-brand-orange text-white flex items-center justify-center gap-3 active:translate-y-1 active:shadow-none shadow-[3px_3px_0px_#141414]">
-            <Zap size={18} fill="white" />
-            <span className="tracking-tighter">Remove Ads</span>
-          </button>
+          {adsRemoved ? (
+            <div className="bento-btn bg-green-500 text-white flex items-center justify-center gap-3">
+              <Zap size={18} fill="white" />
+              <span className="tracking-tighter">Ads Removed - Thank You!</span>
+            </div>
+          ) : (
+            <button 
+              onClick={handleRemoveAds}
+              className="bento-btn bg-brand-orange text-white flex items-center justify-center gap-3 active:translate-y-1 active:shadow-none shadow-[3px_3px_0px_#141414]"
+            >
+              <Zap size={18} fill="white" />
+              <span className="tracking-tighter">Remove Ads ($4.99)</span>
+            </button>
+          )}
+          {isNativeApp && !adsRemoved && (
+            <button 
+              onClick={handleRestorePurchases}
+              className="bento-btn bg-brand-gray text-brand-black flex items-center justify-center gap-3 active:translate-y-1 active:shadow-none border-2 border-brand-black"
+            >
+              <span className="tracking-tighter text-xs">Restore Purchases</span>
+            </button>
+          )}
           <button className="bento-btn bg-brand-black text-white flex items-center justify-center gap-3 active:translate-y-1 active:shadow-none shadow-[3px_3px_0px_#FF6321]">
             <Users size={18} />
             <span className="tracking-tighter">Join Members Circle</span>
