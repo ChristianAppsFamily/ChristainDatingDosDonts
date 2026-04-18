@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Playfair Display", "Georgia", serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-brand-orange: #FF6321;
+  --color-brand-black: #141414;
+  --color-brand-gray: #F4F4F4;
+  --color-brand-white: #FFFFFF;
+}
+
+@layer base {
+  body {
+    @apply bg-brand-white text-brand-black font-sans antialiased;
+  }
+}
+
+@layer components {
+  .bento-card {
+    @apply border-2 border-brand-black rounded-[24px] p-6 flex flex-col relative overflow-hidden transition-all duration-200;
+  }
+  
+  .bento-title {
+    @apply text-[12px] font-bold uppercase tracking-[1px] mb-4 flex items-center gap-2;
+  }
+  
+  .bento-title::before {
+    content: '';
+    @apply w-2 h-2 bg-brand-orange rounded-full;
+  }
+
+  .bento-btn {
+    @apply px-5 py-3 rounded-[12px] border-2 border-brand-black font-bold text-[13px] uppercase transition-colors duration-200;
+  }
+}
